@@ -112,8 +112,6 @@ def process_data(df):
 
     # convert date-time
     df['download_datetime'] = pd.to_datetime(df['requestdatetime'], format='%d/%b/%Y:%H:%M:%S %z')
-    df['download_dt'] = df['download_datetime'].dt.date
-    df['download_time'] = df['download_datetime'].dt.time
 
     return df
 
