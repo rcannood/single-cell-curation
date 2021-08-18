@@ -103,7 +103,7 @@ def process_data(df):
     df.loc[df['useragent'].str.contains('Mac OS'), 'download_agent'] = 'macOS'
     df.loc[df['useragent'].str.contains('Win64'), 'download_agent'] = 'Win64'
     df.loc[df['useragent'].str.contains('WOW64'), 'download_agent'] = 'WOW64'
-    df.loc[(df['useragent'].str.contains('Windows NT')) & (~df['useragent'].str.contains('Win64')) & (~df['useragent'].str.contains('WOW64'))] = 'Windows'
+    df.loc[(df['useragent'].str.contains('Windows NT')) & (~df['useragent'].str.contains('Win64')) & (~df['useragent'].str.contains('WOW64')), 'download_agent'] = 'Windows'
     df.loc[df['useragent'].str.contains('python-requests'), 'download_agent'] = 'requests-python'
     df.loc[df['useragent'].str.contains('Ubuntu'), 'download_agent'] = 'Ubuntu'
     df.loc[df['useragent'].str.contains('Boto'), 'download_agent'] = 'boto-python'
