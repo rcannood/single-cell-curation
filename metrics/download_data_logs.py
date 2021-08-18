@@ -10,7 +10,7 @@ def create_query(client):
     query_id = str(uuid4())
 
     query_string = (
-            "SELECT key, requestdatetime, remoteip, bytessent, useragent, objectsize FROM "
+            "SELECT key, requestdatetime, remoteip, bytessent, useragent FROM "
             "cellxgene_portal_dataset_download_logs_db.dataset_download_logs WHERE operation like "
             "'REST.GET.OBJECT';"
     )
@@ -84,13 +84,9 @@ def create_df(output):
         remoteip.append(row['Data'][2]['VarCharValue'])
         bytessent.append(row['Data'][3]['VarCharValue'])
         useragent.append(row['Data'][4]['VarCharValue'])
-        if 'VarCharValue' in row['Data'][5].keys():
-            objectsize.append(row['Data'][5]['VarCharValue'])
-        else:
-            objectsize.append(None)
 
 
-    df = pd.DataFrame({'key': key, 'requestdatetime': requestdatetime, 'remoteip': remoteip, 'bytessent': bytessent, 'useragent': useragent, 'objectsize': objectsize})
+    df = pd.DataFrame({'key': key, 'requestdatetime': requestdatetime, 'remoteip': remoteip, 'bytessent': bytessent, 'useragent': useragent})
     return df
 
 def process_data(df):
@@ -105,14 +101,14 @@ def process_data(df):
     df['download_agent'] = None
     df.loc[df['useragent'].str.contains('curl'), 'download_agent'] = 'curl'
     df.loc[df['useragent'].str.contains('Mac OS'), 'download_agent'] = 'macOS'
-    df.loc[df['useragent'].str.contains('Windows'), 'download_agent'] = 'Win64'
+    df.loc[df['useragent'].str.contains('Win64'), 'download_agent'] = 'Win64'
+    df.loc[df['useragent'].str.contains('WOW64'), 'download_agent'] = 'WOW64'
+    df.loc[(df['useragent'].str.contains('Windows NT')) & (~df['useragent'].str.contains('Win64')) & (~df['useragent'].str.contains('WOW64'))] = 'Windows'
     df.loc[df['useragent'].str.contains('python-requests'), 'download_agent'] = 'requests-python'
     df.loc[df['useragent'].str.contains('Ubuntu'), 'download_agent'] = 'Ubuntu'
     df.loc[df['useragent'].str.contains('Boto'), 'download_agent'] = 'boto-python'
 
-    # convert date-time
-    df['download_datetime'] = pd.to_datetime(df['requestdatetime'], format='%d/%b/%Y:%H:%M:%S %z')
-
+    df = df.rename(columns={'requestdatetime':'download_datetime'})
     return df
 
 if __name__ == "__main__":
