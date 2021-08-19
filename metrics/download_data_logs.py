@@ -107,6 +107,7 @@ def process_data(df):
     df.loc[df['useragent'].str.contains('python-requests'), 'download_agent'] = 'requests-python'
     df.loc[df['useragent'].str.contains('Ubuntu'), 'download_agent'] = 'Ubuntu'
     df.loc[df['useragent'].str.contains('Boto'), 'download_agent'] = 'boto-python'
+    df.loc[df['download_agent'].isnull(), 'download_agent'] = 'other'
 
     df = df.rename(columns={'requestdatetime':'download_datetime'})
     return df
@@ -119,8 +120,6 @@ if __name__ == "__main__":
 
     df = create_df(output)
     print('Created dataframe')
-
-    df.to_csv('test.csv', index = False)
 
     processed_df = process_data(df)
     print('Processed dataframe')
