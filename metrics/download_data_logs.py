@@ -90,13 +90,14 @@ def create_df(output):
     return df
 
 def process_data(df):
-    # extract dataset_id and filetype from key
-    filepath = df['key'].str.split('/', expand = True)
-    file = filepath[1].str.split('.', expand = True)
-
-    df['dataset_id'] = filepath[0]
-    df['filetype'] = file[1]
-
+    # extract filetype from key
+    df['filetype'] = None
+    df.loc[df['key'].str.contains('.h5ad'), 'filetype'] = 'h5ad'
+    df.loc[df['key'].str.contains('.loom'), 'filetype'] = 'loom'
+    df.loc[df['key'].str.contains('.rds'), 'filetype'] = 'rds'
+    df.loc[df['key'].str.contains('.tar'), 'filetype'] = 'tar'
+    df.loc[df['key'].str.contains('.ico'), 'filetype'] = 'ico'
+    
     # extract download method 
     df['download_agent'] = None
     df.loc[df['useragent'].str.contains('curl'), 'download_agent'] = 'curl'
