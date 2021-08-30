@@ -10,7 +10,7 @@ def create_query(client):
     query_id = str(uuid4())
 
     query_string = (
-            "SELECT key, requestdatetime, remoteip, bytessent, useragent FROM "
+            "SELECT key, requestdatetime, remoteip, bytessent, useragent, objectsize FROM "
             "cellxgene_portal_dataset_download_logs_db.dataset_download_logs WHERE operation like "
             "'REST.GET.OBJECT';"
     )
@@ -84,9 +84,13 @@ def create_df(output):
         remoteip.append(row['Data'][2]['VarCharValue'])
         bytessent.append(row['Data'][3]['VarCharValue'])
         useragent.append(row['Data'][4]['VarCharValue'])
+        if 'VarCharValue' in row['Data'][5].keys():
+            objectsize.append(row['Data'][5]['VarCharValue'])
+        else:
+            objectsize.append(None)
 
 
-    df = pd.DataFrame({'key': key, 'requestdatetime': requestdatetime, 'remoteip': remoteip, 'bytessent': bytessent, 'useragent': useragent})
+    df = pd.DataFrame({'key': key, 'requestdatetime': requestdatetime, 'remoteip': remoteip, 'bytessent': bytessent, 'useragent': useragent, 'objectsize': objectsize})
     return df
 
 def process_data(df):
