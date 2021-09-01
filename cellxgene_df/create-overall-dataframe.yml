@@ -1,0 +1,8 @@
+name: 'Create overall dataframe'
+
+on:
+  schedule: 
+    - cron: "0 0 * * 1"
+
+jobs:
+    
