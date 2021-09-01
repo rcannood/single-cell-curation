@@ -147,6 +147,10 @@ if __name__ == "__main__":
             print('saved dataframe to file')
         print('Files: {}'.format(count))
 
+    # limit to only datasets still on the platform
+    datasets_df = input_df[['dataset_id']]
+    combined = datasets_df.merge(combined, how = 'inner', on = 'dataset_id')
+    
     if 'collection_id' not in combined.columns.tolist():
         combined = translation.merge(combined, how = 'inner', on = 'dataset_id')
         combined.to_csv('cellxgene_df.csv', index = False)
